@@ -42,7 +42,7 @@ tail(activity_data)
 2. Process/transform the data (if necessary) into a format suitable for your analysis
 
 ```r
-class(activity_data$date)
+class(activity_data$date) # Checking class of date variable in dataset
 ```
 
 ```
@@ -50,9 +50,9 @@ class(activity_data$date)
 ```
 
 ```r
-activity_data$date <- as.Date(activity_data$date)
+activity_data$date <- as.Date(activity_data$date) # converting date value to factor to date format
 
-class(activity_data$date)
+class(activity_data$date) # Checking class of date variable in dataset
 ```
 
 ```
@@ -64,13 +64,14 @@ class(activity_data$date)
 1. Make a histogram of the total number of steps taken each day
 
 ```r
-total_steps <- tapply(activity_data$steps, activity_data$date, FUN=sum)
+total_steps <- tapply(activity_data$steps, activity_data$date, FUN=sum) # Aggregating number of steps for each day
 
+# Plotting histogram of total number of steps taken each day
 hist(total_steps,
-breaks=11,
-freq=TRUE,
-main="Histogram of total number of steps taken each day",
-xlab="Total number of steps taken per day")
+     breaks=11,
+     freq=TRUE,
+     main="Histogram of total number of steps taken each day",
+     xlab="Total number of steps taken per day")
 ```
 
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
@@ -117,21 +118,6 @@ plot(avg_steps$steps~avg_steps$interval,
      ylab="the average number of steps taken")
 ```
 
-```
-## Warning in title(...): conversion failure on '5−minute interval versus
-## average number of steps taken' in 'mbcsToSbcs': dot substituted for <e2>
-```
-
-```
-## Warning in title(...): conversion failure on '5−minute interval versus
-## average number of steps taken' in 'mbcsToSbcs': dot substituted for <88>
-```
-
-```
-## Warning in title(...): conversion failure on '5−minute interval versus
-## average number of steps taken' in 'mbcsToSbcs': dot substituted for <92>
-```
-
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
@@ -144,6 +130,7 @@ avg_steps[which.max(avg_steps$steps),]
 ##     interval    steps
 ## 104      835 206.1698
 ```
+The maximum number of steps is 206.1698. The corresponding 5-minute interval identifier is 835. 
 
 
 ## Imputing missing values
@@ -159,9 +146,11 @@ table(is.na(activity_data))
 ## FALSE  TRUE 
 ## 50400  2304
 ```
+There are 2304 NA values in dataset.
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
+Here, we replace the missing values by the mean for the corresponding 5-minute interval.
 
 ```r
 value_filled <- function(steps, interval) {
@@ -176,8 +165,9 @@ value_filled <- function(steps, interval) {
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
+
 ```r
-activity_data_new <- activity_data
+activity_data_new <- activity_data # Creating new dataset 
 activity_data_new$steps <- mapply(value_filled, activity_data_new$steps, activity_data_new$interval)
 # show that the missing values are gone
 table(is.na(activity_data_new))
@@ -214,11 +204,11 @@ median_new <- median(total_steps_new, na.rm=TRUE)
 Let’s compare the new mean and median to those we calculated above
 
 ```r
-mean_steps<mean_new
+mean_steps <= mean_new
 ```
 
 ```
-## [1] FALSE
+## [1] TRUE
 ```
 
 ```r

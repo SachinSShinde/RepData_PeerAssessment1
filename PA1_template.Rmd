@@ -17,24 +17,25 @@ tail(activity_data)
 
 2. Process/transform the data (if necessary) into a format suitable for your analysis
 ```{r echo=TRUE}
-class(activity_data$date)
+class(activity_data$date) # Checking class of date variable in dataset
 
-activity_data$date <- as.Date(activity_data$date)
+activity_data$date <- as.Date(activity_data$date) # converting date value to factor to date format
 
-class(activity_data$date)
+class(activity_data$date) # Checking class of date variable in dataset
 ```
 
 ## What is mean total number of steps taken per day?
 
 1. Make a histogram of the total number of steps taken each day
 ```{r}
-total_steps <- tapply(activity_data$steps, activity_data$date, FUN=sum)
+total_steps <- tapply(activity_data$steps, activity_data$date, FUN=sum) # Aggregating number of steps for each day
 
+# Plotting histogram of total number of steps taken each day
 hist(total_steps,
-breaks=11,
-freq=TRUE,
-main="Histogram of total number of steps taken each day",
-xlab="Total number of steps taken per day")
+     breaks=11,
+     freq=TRUE,
+     main="Histogram of total number of steps taken each day",
+     xlab="Total number of steps taken per day")
 ```
 
 2. Calculate and report the mean and median total number of steps taken per day
@@ -51,7 +52,7 @@ median_steps
 ## What is the average daily activity pattern?
 
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r echo=TRUE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 avg_steps <- aggregate(x=list(steps=activity_data$steps),
               by=list(interval=activity_data$interval),
               FUN=mean,
@@ -69,6 +70,7 @@ plot(avg_steps$steps~avg_steps$interval,
 ```{r echo=TRUE}
 avg_steps[which.max(avg_steps$steps),]
 ```
+The maximum number of steps is 206.1698. The corresponding 5-minute interval identifier is 835. 
 
 
 ## Imputing missing values
@@ -77,9 +79,11 @@ avg_steps[which.max(avg_steps$steps),]
 ```{r echo=TRUE}
 table(is.na(activity_data))
 ```
+There are 2304 NA values in dataset.
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
+Here, we replace the missing values by the mean for the corresponding 5-minute interval.
 ```{r echo=TRUE}
 value_filled <- function(steps, interval) {
   filled <- NA
@@ -92,8 +96,9 @@ value_filled <- function(steps, interval) {
 ```
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
 ```{r echo=TRUE}
-activity_data_new <- activity_data
+activity_data_new <- activity_data # Creating new dataset 
 activity_data_new$steps <- mapply(value_filled, activity_data_new$steps, activity_data_new$interval)
 # show that the missing values are gone
 table(is.na(activity_data_new))
@@ -119,7 +124,7 @@ median_new <- median(total_steps_new, na.rm=TRUE)
 
 Let’s compare the new mean and median to those we calculated above
 ```{r echo=TRUE}
-mean_steps<mean_new
+mean_steps <= mean_new
 median_steps < median_new
 ```
 
